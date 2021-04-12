@@ -36,6 +36,8 @@ jobs:
             '.\src\Microsoft.OpenApi.Tool\Microsoft.OpenApi.Tool.csproj'
           )
 
+          Write-Output "New version ${{ steps.tag_generator.outputs.new_version }}"
+
           $projectsArray | ForEach-Object {
             dotnet build $PSItem `
             -c Release `
