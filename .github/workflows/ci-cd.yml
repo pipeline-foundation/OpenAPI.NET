@@ -107,20 +107,12 @@ jobs:
             '.\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj',
             '.\src\Microsoft.OpenApi.Tool\Microsoft.OpenApi.Tool.csproj'
           )
-          $targetsArray = @(
-            'restore',
-            'build'
-          )
 
           $projectsArray | ForEach-Object {
-            $project = $PSItem
-            
-            $targetsArray | ForEach-Object {
-              dotnet msbuild $project `
-              /t:$PSItem `
-              /p:Configuration=Release `
-              /p:OutputPath=$env:ARTIFACTS_FOLDER
-            }
+            dotnet build $PSItem `
+            /t:build `
+            /p:Configuration=Release `
+            /p:OutputPath=$env:ARTIFACTS_FOLDER
           }
 
           Push-Location Artifacts/
@@ -138,7 +130,7 @@ jobs:
           )
 
           $testProjectsArray | ForEach-Object {
-            dotnet test $PSItem
+            dotnet test $PSItem --configuration Release
           }
 
       - name: Upload NuGet packages as artifacts
@@ -148,27 +140,18 @@ jobs:
           name: NuGet packages
           path: Artifacts\NuGet\
 
-      # - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
-      #   name: Create NuGet package
-      #   id: create_nuget_package
+      # - name: Push NuGet packages to NuGet.org
+      #   id: push_nuget_packages
       #   shell: pwsh
       #   run: |
-      #     nuget pack nuget/MimeKit.nuspec `
-      #     -Version "$env:LATEST_VERSION.$env:GITHUB_RUN_NUMBER"
+      #     Push-Location Artifacts/NuGet/
+      #     Get-ChildItem *.nupkg -recurse | ForEach-Object {
+      #       nuget push $PSItem `
+      #       -ApiKey $env:NUGET_API_KEY `
+      #       -Source https://api.nuget.org/v3/index.json
+      #     }
       #   env:
-      #     LATEST_VERSION: ${{ steps.get_semantic_version.outputs.version_num }}          
-
-      # - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
-      #   name: Push NuGet package to MyGet
-      #   id: push_nuget_package
-      #   shell: pwsh
-      #   run: |
-      #     nuget push $env:NUGET_PKG_PATH `
-      #     -ApiKey $env:MYGET_API_KEY `
-      #     -Source https://www.myget.org/F/mimekit/api/v3/index.json
-      #   env:
-      #     NUGET_PKG_PATH: MimeKit.${{ steps.get_semantic_version.outputs.version_num }}.${{ env.GITHUB_RUN_NUMBER }}.nupkg
-      #     MYGET_API_KEY: ${{ secrets.MYGET_API_KEY }}
+      #     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
       # - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
       #   name: Upload NuGet package as artifact
