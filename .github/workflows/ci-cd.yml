@@ -31,13 +31,13 @@ jobs:
 
           $projectsArray | ForEach-Object {
             dotnet build $PSItem `
-            /p:Configuration=Release `
-            /p:OutputPath=$env:ARTIFACTS_FOLDER
+            -c Release `
+            -o $env:ARTIFACTS_FOLDER
           }
 
-          Push-Location Artifacts/
-          New-Item NuGet -ItemType Directory
-          Get-ChildItem *.nupkg -recurse | Move-Item -destination "NuGet"
+          # Move NuGet packages to separate folder for pipeline convenience
+          New-Item Artifacts/NuGet -ItemType Directory
+          Get-ChildItem Artifacts/*.nupkg | Move-Item -Destination "Artifacts/NuGet"
 
       - name: Run unit tests
         id: run_unit_tests
@@ -50,7 +50,8 @@ jobs:
           )
 
           $testProjectsArray | ForEach-Object {
-            dotnet test $PSItem --configuration Release
+            dotnet test $PSItem `
+            -c Release
           }
 
       - name: Upload NuGet packages as artifacts
