@@ -32,8 +32,7 @@ jobs:
           )
 
           $projectsArray | ForEach-Object {
-            dotnet build $PSItem `
-            /p:Configuration=Release
+            dotnet build $PSItem -c Release
           }
 
       - name: Perform CodeQL Analysis
