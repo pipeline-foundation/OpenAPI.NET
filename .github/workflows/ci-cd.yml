@@ -4,10 +4,10 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   ci:
-    name: Continuous integration
+    name: Continuous Integration
     runs-on: ubuntu-latest
     outputs:
-      latest-version: ${{ steps.tag_generator.outputs.new_version }}
+      latest_version: ${{ steps.tag_generator.outputs.new_version }}
     env:
       ARTIFACTS_FOLDER: ${{ github.workspace }}/Artifacts
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
@@ -25,6 +25,7 @@ jobs:
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: false
+          release_branches: "vnext"
 
       - name: Build projects
         id: build_projects
@@ -35,8 +36,6 @@ jobs:
             '.\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj',
             '.\src\Microsoft.OpenApi.Tool\Microsoft.OpenApi.Tool.csproj'
           )
-
-          Write-Output "New version ${{ steps.tag_generator.outputs.new_version }}"
 
           $projectsArray | ForEach-Object {
             dotnet build $PSItem `
@@ -100,8 +99,8 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{ needs.ci.outputs.latest-version }}
-          release_name: OpenApi v${{ needs.ci.outputs.latest-version }}
+          tag_name: v${{ needs.ci.outputs.latest_version }}
+          release_name: OpenApi v${{ needs.ci.outputs.latest_version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -110,8 +109,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: NuGet/Microsoft.OpenApi.${{ needs.ci.outputs.latest-version }}.nupkg
-          asset_name: Microsoft.OpenApi.${{ needs.ci.outputs.latest-version }}.nupkg
+          asset_path: NuGet/Microsoft.OpenApi.${{ needs.ci.outputs.latest_version }}.nupkg
+          asset_name: Microsoft.OpenApi.${{ needs.ci.outputs.latest_version }}.nupkg
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -121,8 +120,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: NuGet/Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest-version }}.nupkg
-          asset_name: Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest-version }}.nupkg
+          asset_path: NuGet/Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest_version }}.nupkg
+          asset_name: Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest_version }}.nupkg
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
