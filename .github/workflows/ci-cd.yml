@@ -61,6 +61,10 @@ jobs:
           name: NuGet packages
           path: Artifacts/NuGet/
 
+  cd:
+    name: Continuous Deployment
+    runs-on: ubuntu-latest
+    steps:
       - name: Push NuGet packages to NuGet.org
         id: push_nuget_packages
         shell: pwsh
