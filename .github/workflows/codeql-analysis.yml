@@ -43,7 +43,6 @@ jobs:
               /t:$PSItem `
               /p:Configuration=Release
             }
-          }
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
