@@ -25,13 +25,25 @@ jobs:
         id: build_project
         shell: pwsh
         run: |
-          dotnet msbuild .\Microsoft.OpenApi.sln `
+          dotnet msbuild .\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj `
           /t:restore `
           /p:Configuration=Release
 
-          dotnet msbuild .\Microsoft.OpenApi.sln `
+          dotnet msbuild .\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj `
           /t:build `
           /p:Configuration=Release
+
+      - name: Build project
+        id: build_project
+        shell: pwsh
+        run: |
+          dotnet msbuild .\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj `
+          /t:restore `
+          /p:Configuration=Release
+
+          dotnet msbuild .\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj `
+          /t:build `
+          /p:Configuration=Release          
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
