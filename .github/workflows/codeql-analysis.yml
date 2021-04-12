@@ -22,7 +22,7 @@ jobs:
         #   queries: security-and-quality
 
       - name: Build project
-        id: build_project
+        id: build_main_project
         shell: pwsh
         run: |
           dotnet msbuild .\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj `
@@ -34,7 +34,7 @@ jobs:
           /p:Configuration=Release
 
       - name: Build project
-        id: build_project
+        id: build_readers_project
         shell: pwsh
         run: |
           dotnet msbuild .\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj `
