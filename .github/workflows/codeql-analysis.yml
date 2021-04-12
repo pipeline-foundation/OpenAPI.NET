@@ -31,11 +31,11 @@ jobs:
           )
 
           $projectsArray | ForEach-Object {
-            dotnet msbuild [$PSItem] `
+            dotnet msbuild $PSItem `
             /t:restore `
             /p:Configuration=Release
 
-            dotnet msbuild [$PSItem] `
+            dotnet msbuild $PSItem `
             /t:build `
             /p:Configuration=Release
           }
