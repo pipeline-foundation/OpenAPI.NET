@@ -61,17 +61,16 @@ jobs:
           name: NuGet packages
           path: Artifacts/NuGet/
 
-      # - name: Push NuGet packages to NuGet.org
-      #   id: push_nuget_packages
-      #   shell: pwsh
-      #   run: |
-      #     Push-Location Artifacts/NuGet/
-      #     Get-ChildItem *.nupkg -recurse | ForEach-Object {
-      #       nuget push $PSItem `
-      #       -ApiKey $env:NUGET_API_KEY `
-      #       -Source https://api.nuget.org/v3/index.json
-      #     }
-      #   env:
-      #     NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      - name: Push NuGet packages to NuGet.org
+        id: push_nuget_packages
+        shell: pwsh
+        run: |
+          Get-ChildItem Artifacts/NuGet/*.nupkg | ForEach-Object {
+            nuget push $PSItem `
+            -ApiKey $env:NUGET_API_KEY `
+            -Source https://api.nuget.org/v3/index.json
+          }
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
