@@ -25,7 +25,6 @@ jobs:
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: false
-          release_branches: 'feature/ci-cd'
 
       - name: Build projects
         id: build_projects
