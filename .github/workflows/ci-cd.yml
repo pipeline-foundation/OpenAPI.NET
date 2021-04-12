@@ -75,6 +75,7 @@ jobs:
 
       - name: Push NuGet packages to NuGet.org
         id: push_nuget_packages
+        continue-on-error: true
         shell: pwsh
         run: |
           Get-ChildItem NuGet/*.nupkg | ForEach-Object {
@@ -84,5 +85,36 @@ jobs:
           }
         env:
           NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+
+      - name: Create and publish release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v1.3.0
+          release_name: OpenApi v1.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload OpenAPI package as release asset
+        id: upload_openapi_pckg
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: NuGet/Microsoft.OpenApi.1.3.0-preview.nupkg
+          asset_name: Microsoft.OpenApi.1.3.0-preview.nupkg
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload OpenAPI.Readers package as release asset
+        id: upload_openapi_readers_pckg
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: NuGet/Microsoft.OpenApi.Readers.1.3.0-preview.nupkg
+          asset_name: Microsoft.OpenApi.Readers.1.3.0-preview.nupkg
+          asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
