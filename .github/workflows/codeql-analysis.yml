@@ -26,6 +26,10 @@ jobs:
         shell: pwsh
         run: |
           dotnet msbuild .\Microsoft.OpenApi.sln `
+          /t:restore `
+          /p:Configuration=Release
+
+          dotnet msbuild .\Microsoft.OpenApi.sln `
           /t:build `
           /p:Configuration=Release
 
