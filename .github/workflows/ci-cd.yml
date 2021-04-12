@@ -123,6 +123,10 @@ jobs:
             }
           }
 
+          Push-Location Artifacts/
+          New-Item NuGet -ItemType Directory
+          Get-ChildItem *.nupkg -recurse | Move-Item -destination "NuGet"
+
       - name: Run unit tests
         id: run_unit_tests
         shell: pwsh
@@ -142,7 +146,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: NuGet packages
-          path: Artifacts\
+          path: Artifacts\NuGet\
 
       # - if: steps.step_conditionals_handler.outputs.is_github_release == 'true'
       #   name: Create NuGet package
