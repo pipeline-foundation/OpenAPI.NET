@@ -55,7 +55,7 @@ jobs:
           }
 
       - name: Upload NuGet packages as artifacts
-        id: upload_nuget_pckgs
+        id: ul_packages_artifact
         uses: actions/upload-artifact@v1
         with:
           name: NuGet packages
@@ -65,11 +65,18 @@ jobs:
     name: Continuous Deployment
     runs-on: ubuntu-latest
     steps:
+      - name: Download and extract NuGet packages
+        id: dl_packages_artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: NuGet packages
+          path: NuGet/
+
       - name: Push NuGet packages to NuGet.org
         id: push_nuget_packages
         shell: pwsh
         run: |
-          Get-ChildItem Artifacts/NuGet/*.nupkg | ForEach-Object {
+          Get-ChildItem NuGet/*.nupkg | ForEach-Object {
             nuget push $PSItem `
             -ApiKey $env:NUGET_API_KEY `
             -Source https://api.nuget.org/v3/index.json
