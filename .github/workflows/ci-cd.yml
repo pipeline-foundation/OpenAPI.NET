@@ -110,7 +110,6 @@ jobs:
 
           $projectsArray | ForEach-Object {
             dotnet build $PSItem `
-            /t:build `
             /p:Configuration=Release `
             /p:OutputPath=$env:ARTIFACTS_FOLDER
           }
