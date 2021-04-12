@@ -18,32 +18,27 @@ jobs:
       - name: Initialize CodeQL
         id: init_codeql
         uses: github/codeql-action/init@v1
-        # with:
-        #   queries: security-and-quality
+        with:
+          queries: security-and-quality
 
-      - name: Build project
-        id: build_main_project
+      - name: Build projects
+        id: build_projects
         shell: pwsh
         run: |
-          dotnet msbuild .\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj `
-          /t:restore `
-          /p:Configuration=Release
+          $projectsArray = @(
+            '.\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj',
+            '.\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj'
+          )
 
-          dotnet msbuild .\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj `
-          /t:build `
-          /p:Configuration=Release
+          $projectsArray | ForEach-Object {
+            dotnet msbuild [$PSItem] `
+            /t:restore `
+            /p:Configuration=Release
 
-      - name: Build project
-        id: build_readers_project
-        shell: pwsh
-        run: |
-          dotnet msbuild .\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj `
-          /t:restore `
-          /p:Configuration=Release
-
-          dotnet msbuild .\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj `
-          /t:build `
-          /p:Configuration=Release          
+            dotnet msbuild [$PSItem] `
+            /t:build `
+            /p:Configuration=Release
+          }
 
       - name: Perform CodeQL Analysis
         id: analyze_codeql
