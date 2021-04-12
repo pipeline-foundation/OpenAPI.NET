@@ -19,11 +19,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      # - name: Setup .NET SDK
-      #   uses: actions/setup-dotnet@v1
-      #   with:
-      #     dotnet-version: 5.0.x
-
       - name: Build projects
         id: build_projects
         shell: pwsh
@@ -63,7 +58,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: NuGet packages
-          path: Artifacts\NuGet\
+          path: Artifacts/NuGet/
 
       # - name: Push NuGet packages to NuGet.org
       #   id: push_nuget_packages
