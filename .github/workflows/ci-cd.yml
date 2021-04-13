@@ -12,6 +12,15 @@ jobs:
       ARTIFACTS_FOLDER: ${{ github.workspace }}/Artifacts
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
     steps:
+      - name: Data gatherer
+        id: data_gatherer
+        shell: pwsh
+        run: |
+          # Get default branch
+          $repo = 'microsoft/OpenAPI.NET'
+          $defaultBranch = Invoke-RestMethod -Method GET -Uri https://api.github.com/repos/$repo | Select-Object -ExpandProperty default_branch
+          Write-Output "::set-output name=default_branch::$(echo $defaultBranch)"
+
       - name: Checkout repository
         id: checkout_repo
         uses: actions/checkout@v2
@@ -19,30 +28,40 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - if: github.ref == 'refs/heads/vnext'
+      - if: includes(github.ref, 'vnext')
         name: Bump GH tag
         id: tag_generator
         uses: mathieudutour/github-tag-action@v5.4
         with: 
           github_token: ${{ secrets.GITHUB_TOKEN }}
           default_bump: false
-          release_branches: "vnext"
+          release_branches: ${{ steps.data_gatherer.outputs.default_branch }}
 
       - name: Build projects
         id: build_projects
         shell: pwsh
         run: |
+          $newVersion = ${{ steps.tag_generator.outputs.new_version }}
           $projectsArray = @(
             '.\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj',
             '.\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj',
             '.\src\Microsoft.OpenApi.Tool\Microsoft.OpenApi.Tool.csproj'
           )
 
-          $projectsArray | ForEach-Object {
-            dotnet build $PSItem `
-            -c Release `
-            -o $env:ARTIFACTS_FOLDER `
-            /p:Version=${{ steps.tag_generator.outputs.new_version }}
+          if ($newVersion) {
+            $projectsArray | ForEach-Object {
+              dotnet build $PSItem `
+              -c Release `
+              -o $env:ARTIFACTS_FOLDER `
+              /p:Version=$newVersion
+            }
+          }
+          else {
+            $projectsArray | ForEach-Object {
+              dotnet build $PSItem `
+              -c Release `
+              -o $env:ARTIFACTS_FOLDER
+            }
           }
 
           # Move NuGet packages to separate folder for pipeline convenience
