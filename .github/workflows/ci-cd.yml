@@ -53,7 +53,7 @@ jobs:
         id: build_projects
         shell: pwsh
         run: |
-          $newVersion = ${{ steps.tag_generator.outputs.new_version }}
+          $newVersion = "${{ steps.tag_generator.outputs.new_version }}"
           $projectsArray = @(
             '.\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj',
             '.\src\Microsoft.OpenApi.Readers\Microsoft.OpenApi.Readers.csproj',
