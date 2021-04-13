@@ -13,6 +13,11 @@ jobs:
       ARTIFACTS_FOLDER: ${{ github.workspace }}/Artifacts
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
     steps:
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.x
+
       - name: Data gatherer
         id: data_gatherer
         shell: pwsh
