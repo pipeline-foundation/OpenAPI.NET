@@ -17,7 +17,7 @@ jobs:
         shell: pwsh
         run: |
           $defaultBranch = 'vnext'
-          $githubRef = ${{ github.ref }}
+          $githubRef = "${{ github.ref }}"
           $isDefaultBranch = 'false'
           if ( $githubRef -like "*$defaultBranch*" ) {
             $isDefaultBranch = 'true'
