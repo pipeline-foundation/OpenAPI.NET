@@ -88,7 +88,7 @@ jobs:
         id: run_unit_tests
         shell: pwsh
         run: |
-          Get-ChildItem -Filter *Tests.csproj -File -Recurse | ForEach-Object {
+          Get-ChildItem -Path test/ -Filter *.csproj -File -Recurse | ForEach-Object {
             $fileBaseName = $PSItem.Basename
             dotnet test $PSItem.FullName `
             --configuration Release `
