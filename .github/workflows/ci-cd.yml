@@ -73,7 +73,7 @@ jobs:
           $projectCurrentVersion = ([xml](Get-Content -Path .\src\Microsoft.OpenApi\Microsoft.OpenApi.csproj)).Project.PropertyGroup.Version
           $projectNewVersion = $gitNewVersion ?? $projectCurrentVersion
 
-          Get-ChildItem -Filter *.csproj -Exclude *Tests*, *Workbench* -File -Recurse | ForEach-Object {
+          Get-ChildItem -Path src/ -Filter *.csproj -Exclude *Workbench* -File -Recurse | ForEach-Object {
             dotnet build $PSItem.FullName `
             --configuration Release # `
             # --output $env:ARTIFACTS_FOLDER `
