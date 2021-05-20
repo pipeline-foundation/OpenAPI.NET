@@ -89,9 +89,19 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Filter *Tests.csproj -File -Recurse | ForEach-Object {
+            $fileBaseName = $PSItem.Basename
             dotnet test $PSItem.FullName `
-            --configuration Release
+            --configuration Release `
+            --logger "trx;LogFileName=$fileBaseName.trx;verbosity=normal" `
+            --results-directory TestResults/
           }
+
+      - name: Upload test results as artifacts
+        id: ul_testresults_artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: TestResults
+          path: TestResults/
 
       # - if: steps.tag_generator.outputs.new_version != ''
       #   name: Upload NuGet packages as artifacts
