@@ -139,14 +139,14 @@ jobs:
 
       - name: Create and publish release
         id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          name: OpenApi v${{ needs.ci.outputs.latest_version }}
-          tag_name: v${{ needs.ci.outputs.latest_version }}
-          # files: |
-          #   NuGet/Microsoft.OpenApi.${{ needs.ci.outputs.latest_version }}.nupkg
-          #   NuGet/Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest_version }}.nupkg
+        shell: pwsh
+        run: |
+          $releaseTag = "v${{ needs.ci.outputs.latest_version }}"
+          $releaseTitle = "OpenApi v${{ needs.ci.outputs.latest_version }}"
+          # $releaseAssets = 'NuGet/Microsoft.OpenApi.${{ needs.ci.outputs.latest_version }}.nupkg', 'NuGet/Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest_version }}.nupkg'
+
+          gh release create $releaseTag -t $releaseTitle $releaseAssets
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # Built with ❤ by [Pipeline Foundation](https://pipeline.foundation)
