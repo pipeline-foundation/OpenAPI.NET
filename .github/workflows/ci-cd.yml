@@ -156,7 +156,7 @@ jobs:
         run: |
           $newTag = "v${{ needs.ci.outputs.latest_version }}"
           $releaseTitle = "OpenApi v${{ needs.ci.outputs.latest_version }}"
-          $releaseAssets = "README.md build.cmd"
+          # $releaseAssets = 'NuGet/Microsoft.OpenApi.${{ needs.ci.outputs.latest_version }}.nupkg', 'NuGet/Microsoft.OpenApi.Readers.${{ needs.ci.outputs.latest_version }}.nupkg'
 
           gh release create $newTag -t $releaseTitle $releaseAssets
 
